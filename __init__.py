@@ -1,9 +1,10 @@
 import gymnasium as gym
 
 gym.register(
-    id="FrankaCubeStack-v0",
-    entry_point="project.envs.franka_cube_stack:FrankaCubeStackEnv",
-    max_episode_steps=1000,
+    id="FrankaCubePick-v0",
+    entry_point="isaaclab.envs:ManagerBasedRLEnv",
+    disable_env_checker=True,
+    # max_episode_steps=1000,
     kwargs={
         "env_config": {
             "scene": {

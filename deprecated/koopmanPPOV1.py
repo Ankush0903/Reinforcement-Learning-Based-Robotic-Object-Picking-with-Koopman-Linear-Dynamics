@@ -111,7 +111,7 @@ class KoopmanEnv(gym.Env):
         obs = self.get_obs()
         return obs
 
-        def get_raw_state(self):
+    def get_raw_state(self):
         # Replace with real Isaac Sim data
         joint_pos = self.robot.get_joint_positions()
         joint_vel = self.robot.get_joint_velocities()
