@@ -64,14 +64,14 @@ def get_agent_cfg(path: str, env: ManagerBasedRLEnv, device: str = "cuda") -> di
     #     cfg = yaml.safe_load(f)
 
     cfg = PPO_DEFAULT_CONFIG.copy()
-    cfg["rollouts"] = 16  # memory_size
-    cfg["learning_epochs"] = 8
-    cfg["mini_batches"] = 1  # 16 * 512 / 8192
+    cfg["rollouts"] = 512  # memory_size
+    cfg["learning_epochs"] = 4
+    cfg["mini_batches"] = 8  # 16 * 512 / 8192
     cfg["discount_factor"] = 0.99
     cfg["lambda"] = 0.95
-    cfg["learning_rate"] = 3e-4
+    cfg["learning_rate"] = 0.0001
     cfg["learning_rate_scheduler"] = KLAdaptiveRL
-    cfg["learning_rate_scheduler_kwargs"] = {"kl_threshold": 0.008}
+    cfg["learning_rate_scheduler_kwargs"] = {"kl_threshold": 0.01}
     cfg["random_timesteps"] = 0
     cfg["learning_starts"] = 0
     cfg["grad_norm_clip"] = 1.0
@@ -82,15 +82,39 @@ def get_agent_cfg(path: str, env: ManagerBasedRLEnv, device: str = "cuda") -> di
     cfg["value_loss_scale"] = 2.0
     cfg["kl_threshold"] = 0
     cfg["rewards_shaper"] = None
-    cfg["time_limit_bootstrap"] = True
+    cfg["time_limit_bootstrap"] = False
     cfg["state_preprocessor"] = RunningStandardScaler
     cfg["state_preprocessor_kwargs"] = {"size": env.observation_space, "device": device}
     cfg["value_preprocessor"] = RunningStandardScaler
     cfg["value_preprocessor_kwargs"] = {"size": 1, "device": device}
+
+    # --- Add Koopman Config ---
+    cfg["koopman_embedding_dim"] = 128 # Or your desired dimension
+    cfg["koopman_weight_linearity"] = 0.1 # Weight for ||g(s') - K g(s)||^2 loss
+    cfg["koopman_weight_reconstruction"] = 0.5 # Weight for ||s - decoder(g(s))||^2 loss
+    cfg["koopman_weight_prediction"] = 0.5 # Weight for ||g(s) - K g(s)||^2 loss
+
     # logging to TensorBoard and write checkpoints (in timesteps)
-    cfg["experiment"]["write_interval"] = 16
-    cfg["experiment"]["checkpoint_interval"] = 80
-    cfg["experiment"]["directory"] = "runs/torch/PickAndPlace-v0"
+    # cfg["experiment"]["write_interval"] = 16
+    # cfg["experiment"]["checkpoint_interval"] = 80
+    # cfg["experiment"]["directory"] = "runs/torch/PickAndPlace-v0"
+
+    cfg["experiment"] = {
+        "directory": "runs/torch/PickAndPlace-v0",            # experiment's parent directory
+        # "experiment_name": "pick-and-place",      # experiment name
+        "project": "pick-and-place",  # project name
+        "write_interval": 500,   # TensorBoard writing interval (timesteps)
+
+        "checkpoint_interval": 2000,      # interval for checkpoints (timesteps)
+        "store_separately": True,          # whether to store checkpoints separately
+
+        "wandb": True,             # whether to use Weights & Biases
+        "wandb_kwargs": {
+            "project": "pick-and-place",  # experiment name
+            "sync_tensorboard": True,  # sync TensorBoard logs
+            "save_code": True,  # save code
+        }          # wandb kwargs (see https://docs.wandb.ai/ref/python/init)
+    }
 
 
     return cfg
