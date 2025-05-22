@@ -181,6 +181,7 @@ class KoopmanPPO(PPO):
         cumulative_koopman_linearity_loss = 0.0
         cumulative_koopman_reconstruction_loss = 0.0
         cumulative_koopman_prediction_loss = 0.0
+        cumulative_total_loss = 0
 
         # iterate over learning epochs
         for epoch in range(self._learning_epochs):
@@ -343,6 +344,8 @@ class KoopmanPPO(PPO):
                 cumulative_koopman_linearity_loss += koopman_linearity_loss.item()
                 cumulative_koopman_prediction_loss += koopman_prediction_loss.item()
 
+                cumulative_total_loss += total_loss.item()
+
             # End of mini-batch loop for the epoch
 
             # Update learning rate scheduler
@@ -368,6 +371,7 @@ class KoopmanPPO(PPO):
         self.track_data("Loss / Policy loss", cumulative_policy_loss / num_updates)
         self.track_data("Loss / Value loss", cumulative_value_loss / num_updates) # value_loss is already scaled
         self.track_data("Loss / Entropy loss", cumulative_entropy_loss / num_updates) # entropy_loss is already scaled
+        self.track_data("Loss / Total loss", cumulative_total_loss / num_updates)
 
         # Record Koopman losses
         if self._use_koopman_losses:

@@ -101,6 +101,20 @@ class Shared_Koopman(MultivariateGaussianMixin, DeterministicMixin, Model):
         # Placeholder for Koopman operator K (needs estimation during training)
         # self.K = nn.Parameter(torch.randn(koopman_embedding_dim, koopman_embedding_dim), requires_grad=False) # Example
 
+        # --- Add Koopman Operator (K) and Control Matrix (B) ---
+        # K: State transition matrix in embedding space (embedding_dim x embedding_dim)
+        self.K = nn.Parameter(torch.empty(koopman_embedding_dim, koopman_embedding_dim, device=device))
+        # Initialize K close to identity
+        nn.init.eye_(self.K)
+        # Add small noise to break symmetry and encourage learning
+        self.K.data += 0.01 * torch.randn_like(self.K)
+
+        # B: Control matrix mapping actions to embedding space (embedding_dim x num_actions)
+        self.B = nn.Parameter(torch.empty(koopman_embedding_dim, self.num_actions, device=device))
+        # Initialize B with small random values (or zeros)
+        nn.init.xavier_uniform_(self.B, gain=nn.init.calculate_gain('linear'))
+        # Or initialize B to zeros: nn.init.zeros_(self.B)
+
     def encode(self, states):
          # Helper to get embedding
          return self.encoder(states)

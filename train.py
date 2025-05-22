@@ -8,7 +8,7 @@ parser.add_argument(
     "--disable_fabric", action="store_true", default=False, help="Disable fabric and use USD I/O operations."
 )
 parser.add_argument("--num_envs", type=int, default=32, help="Number of environments to simulate.")
-parser.add_argument("--max_iterations", type=int, default=100000, help="Number of timesteps to train for.")
+parser.add_argument("--max_iterations", type=int, default=None, help="Number of timesteps to train for.")
 parser.add_argument("--video", action="store_true", default=False, help="Record videos during training.")
 parser.add_argument("--video_length", type=int, default=200, help="Length of the recorded video (in steps).")
 parser.add_argument("--video_interval", type=int, default=2000, help="Interval between video recordings (in steps).")
@@ -73,7 +73,8 @@ def main():
 
 
     runner_cfg = get_agent_cfg(CONFIG_PATH, env, device=env.device)
-    runner_cfg["timesteps"] = args_cli.max_iterations * runner_cfg["rollouts"]
+    if args_cli.max_iterations is not None:
+        runner_cfg["timesteps"] = args_cli.max_iterations * runner_cfg["rollouts"]
     runner_cfg["headless"] = args_cli.headless
 
     # runner_cfg["trainer"]["timesteps"] = args_cli.timesteps

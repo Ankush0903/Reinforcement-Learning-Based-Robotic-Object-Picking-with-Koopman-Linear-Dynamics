@@ -66,10 +66,11 @@ def get_agent_cfg(path: str, env: ManagerBasedRLEnv, device: str = "cuda") -> di
     cfg = PPO_DEFAULT_CONFIG.copy()
     cfg["rollouts"] = 512  # memory_size
     cfg["learning_epochs"] = 4
+    cfg["timesteps"] = 36000
     cfg["mini_batches"] = 8  # 16 * 512 / 8192
     cfg["discount_factor"] = 0.99
     cfg["lambda"] = 0.95
-    cfg["learning_rate"] = 0.0001
+    cfg["learning_rate"] = 0.008
     cfg["learning_rate_scheduler"] = KLAdaptiveRL
     cfg["learning_rate_scheduler_kwargs"] = {"kl_threshold": 0.01}
     cfg["random_timesteps"] = 0
@@ -100,12 +101,12 @@ def get_agent_cfg(path: str, env: ManagerBasedRLEnv, device: str = "cuda") -> di
     # cfg["experiment"]["directory"] = "runs/torch/PickAndPlace-v0"
 
     cfg["experiment"] = {
-        "directory": "runs/torch/PickAndPlace-v0",            # experiment's parent directory
+        "directory": "project/runs/torch/PickAndPlace-v0",            # experiment's parent directory
         # "experiment_name": "pick-and-place",      # experiment name
         "project": "pick-and-place",  # project name
         "write_interval": 500,   # TensorBoard writing interval (timesteps)
 
-        "checkpoint_interval": 2000,      # interval for checkpoints (timesteps)
+        "checkpoint_interval": 200,      # interval for checkpoints (timesteps)
         "store_separately": True,          # whether to store checkpoints separately
 
         "wandb": True,             # whether to use Weights & Biases
