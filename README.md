@@ -9,12 +9,12 @@ This project implements a reinforcement learning (RL) framework for robotic obje
 ## Prerequisites
 - Operating System: Ubuntu 18.04/20.04 (ROS Melodic/Noetic recommended)
 - ROS Version: Melodic or Noetic
-- **Dependencies**:
+  ## Dependencies ##
   - ROS packages: `ros-<distro>-moveit`, `ros-<distro>-rviz`, `ros-<distro>-gazebo-ros`
   - Python: >= 3.6 (with `numpy`, `torch`, `gym`, `stable-baselines3`)
   - PyTorch: >= 1.8.0 (for RL and Koopman model training)
   - OpenCV: >= 3.2 (for object detection)
   - Gazebo or PyBullet (for simulation)
-- **Hardware**:
+  ## Hardware ##
   - Robotic arm (e.g.Franka Emika) or simulation
   - GPU (recommended for RL training, e.g., NVIDIA RTX 4080 Super or better)
